@@ -1,0 +1,83 @@
+name: Publish docs
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - '.github/workflows/publish_docs.yml'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - '.github/workflows/publish_docs.yml'
+
+concurrency:
+  group: "publish_docs"
+  cancel-in-progress: false
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build_and_publish:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: git lfs checkout
+        run: git lfs checkout
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ./requirements.txt
+
+      - name: Build docs
+        run: python -m mkdocs build -d ./built_docs
+
+      - name: ls built_docs
+        run: ls ./built_docs
+
+      - name: Upload built_docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-${{ github.event.number }}-built_docs
+          path: ./built_docs
+          retention-days: 1
+        if: github.event_name == 'pull_request'
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        if: github.event_name == 'push'
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./built_docs
+        if: github.event_name == 'push'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        if: github.event_name == 'push'
+
