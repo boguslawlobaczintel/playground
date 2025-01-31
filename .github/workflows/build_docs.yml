@@ -17,7 +17,8 @@ on:
 jobs:
   build_documentation:
     runs-on: ubuntu-latest
-
+    outputs:
+      artifact_name: ${{ steps.output_step.outputs.artifact_name }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -51,4 +52,5 @@ jobs:
           retention-days: 1
 
       - name: Echo the output
+        id: output_step
         run: echo "artifact_name=${{ github.run_id }}-${{ github.run_attempt }}-built_docs" >> $GITHUB_OUTPUT
