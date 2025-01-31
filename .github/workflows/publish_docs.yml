@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   build:
-    uses: ./github/workflows/build_docs.yml
+    uses: ./.github/workflows/build_docs.yml
 
   publish:
     needs: build
