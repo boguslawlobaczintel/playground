@@ -8,6 +8,7 @@ on:
       - 'docs/**'
       - 'mkdocs.yml'
       - '.github/workflows/publish_docs.yml'
+      - '.github/workflows/build_docs.yml'
   workflow_call:
     outputs:
       artifact_name:
