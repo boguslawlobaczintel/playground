@@ -1,0 +1,54 @@
+name: Build docs
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - '.github/workflows/publish_docs.yml'
+  workflow_call:
+    outputs:
+      artifact_name:
+        description: "Name of the built documentation artifact"
+        value: ${{ jobs.build_documentation.outputs.artifact_name }}
+
+jobs:
+  build_documentation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: git lfs checkout
+        run: git lfs checkout
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ./requirements.txt
+
+      - name: Build docs
+        run: python -m mkdocs build -d ./built_docs
+
+      - name: ls built_docs
+        run: ls ./built_docs
+
+      - name: Upload built_docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.run_id }}-${{ github.run_attempt }}-built_docs
+          path: ./built_docs
+          retention-days: 1
+
+      - name: Echo the output
+        run: echo "artifact_name=${{ github.run_id }}-${{ github.run_attempt }}-built_docs" >> $GITHUB_OUTPUT
