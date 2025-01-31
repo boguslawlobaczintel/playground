@@ -3,14 +3,14 @@ name: Publish docs
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - 'docs/**'
       - 'mkdocs.yml'
       - '.github/workflows/publish_docs.yml'
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - 'docs/**'
       - 'mkdocs.yml'
