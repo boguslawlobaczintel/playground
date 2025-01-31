@@ -38,20 +38,17 @@ jobs:
           path: ./built_docs
 
       - name: ls built_docs
-        run: ls ./built_docs
+        run: ls ./built_docs/${{ needs.build.outputs.artifact_name }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        if: github.event_name == 'push'
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./built_docs
-        if: github.event_name == 'push'
+          path: ./built_docs/${{ needs.build.outputs.artifact_name }}
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        if: github.event_name == 'push'
 
