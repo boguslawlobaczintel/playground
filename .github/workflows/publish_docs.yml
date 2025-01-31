@@ -39,7 +39,7 @@ jobs:
           path: ./built_docs
 
       - name: ls built_docs
-        run: ls ./built_docs/${{ needs.build.outputs.artifact_name }}
+        run: ls ./built_docs
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -47,7 +47,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./built_docs/${{ needs.build.outputs.artifact_name }}
+          path: ./built_docs
 
       - name: Deploy to GitHub Pages
         id: deployment
